@@ -85,16 +85,12 @@ footer{padding:28px 0 40px;color:var(--muted);font-size:.9rem}
 .demo{background:var(--surface);border:2px solid var(--ink);border-radius:16px;padding:32px;margin-bottom:24px}
 .contact .demo{margin-top:32px}
 .demo h3{font-family:var(--display);font-size:1.4rem;margin:0 0 6px}
-.demo .cols{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:24px}
-.demo form{display:grid;gap:12px;align-content:start}
-.demo input{font:inherit;padding:12px 14px;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);width:100%}
+.demo form{display:grid;gap:12px;align-content:start;max-width:560px;margin-top:24px}
+.demo input,.demo textarea{font:inherit;padding:12px 14px;border:2px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);width:100%}
+.demo textarea{min-height:130px;resize:vertical}
+.demo #status{margin:0;color:var(--muted);min-height:1.6em}
 .demo button{font:inherit;cursor:pointer;justify-self:start}
-.demo .rcard{border:2px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
-.demo .rcard small{display:block;color:var(--muted)}
-.demo h4{font-family:var(--display);margin:0 0 12px;font-size:1.05rem}
-
 @media (max-width:820px){
-  .demo .cols{grid-template-columns:1fr}
   .hero,.featured,.grid,.skills{grid-template-columns:1fr}
   .hero{padding-top:24px}
   .nav nav{gap:14px}
@@ -174,20 +170,15 @@ await fetch(API_URL, {
       <p class="sub">I’m open to internships and small projects.</p>
       <a class="mail" href="mailto:hello@example.com">hello@example.com</a>
       <div class="demo" id="demo">
-        <h3>Try the Student Database live</h3>
-        <p class="sub" style="margin:0">This form saves to my Vercel API and the list loads from it.</p>
-        <div class="cols">
-          <form id="dataForm">
-            <h4>Add new record</h4>
-            <input type="text" id="title" placeholder="Record title" required>
-            <input type="text" id="content" placeholder="Record content" required>
-            <button class="btn primary" type="submit">Save record</button>
-          </form>
-          <div>
-            <h4>Database records</h4>
-            <div id="recordsContainer">Loading…</div>
-          </div>
-        </div>
+        <h3>Contact me</h3>
+        <p class="sub" style="margin:0">Send me a message and I’ll get back to you.</p>
+        <form id="dataForm">
+          <input type="text" id="name" placeholder="Your name" required>
+          <input type="email" id="email" placeholder="Your email" required>
+          <textarea id="message" placeholder="Your message" required></textarea>
+          <button class="btn primary" type="submit">Send message</button>
+          <p id="status" role="status" aria-live="polite"></p>
+        </form>
       </div>
 
       <div class="links">
@@ -201,50 +192,26 @@ await fetch(API_URL, {
     // Your Vercel deployment URL
     const VERCEL_API_URL = 'https://student-api-backend-gamma.vercel.app/api';
 
-    async function loadRecords() {
-      const container = document.getElementById('recordsContainer');
-      try {
-        const response = await fetch(VERCEL_API_URL);
-        const records = await response.json();
-        container.innerHTML = '';
-        if (records.length === 0) {
-          container.textContent = 'No records found.';
-          return;
-        }
-        records.forEach(function (record) {
-          const div = document.createElement('div');
-          div.className = 'rcard';
-          const t = document.createElement('strong');
-          t.textContent = record.title;
-          const c = document.createElement('small');
-          c.textContent = record.content;
-          div.appendChild(t);
-          div.appendChild(c);
-          container.appendChild(div);
-        });
-      } catch (error) {
-        container.textContent = 'Error loading records.';
-      }
-    }
-
     document.getElementById('dataForm').addEventListener('submit', async function (e) {
       e.preventDefault();
-      const title = document.getElementById('title').value;
-      const content = document.getElementById('content').value;
+      const status = document.getElementById('status');
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
+      status.textContent = 'Sending…';
       try {
-        await fetch(VERCEL_API_URL, {
+        const res = await fetch(VERCEL_API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, content })
+          body: JSON.stringify({ title: name, content: email + ': ' + message })
         });
+        if (!res.ok) throw new Error('Request failed');
         document.getElementById('dataForm').reset();
-        loadRecords();
+        status.textContent = 'Message sent. Thank you!';
       } catch (error) {
-        alert('Failed to submit record.');
+        status.textContent = 'Message not sent. Please try again or email me directly.';
       }
     });
-
-    loadRecords();
   </script>
   <footer>© 2026 Jhonna Reinne Iguis</footer>
 </div>
