@@ -3,50 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Database Project</title>
+    <title>Student Portfolio & Projects</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
-        .card { border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
-        input, text-area, button { display: block; width: 100%; margin-bottom: 10px; padding: 8px; }
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --radius: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Portfolio Header Header */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.25rem;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Sections & Cards */
+        .section-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            margin-bottom: 18px;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        /* Form Inputs */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        button:disabled {
+            background-color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Portfolio Record Cards */
+        #recordsContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 6px;
+        }
+
+        .card-content {
+            color: var(--text-main);
+            white-space: pre-line;
+        }
+
+        .status-msg {
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+            padding: 20px 0;
+        }
     </style>
 </head>
 <body>
-    <h2>Add New Record</h2>
-    <form id="dataForm">
-        <input type="text" id="title" placeholder="Record Title" required>
-        <input type="text" id="content" placeholder="Record Content" required>
-        <button type="submit">Submit to Database</button>
-    </form>
 
-    <h2>Database Records</h2>
-    <div id="recordsContainer">Loading...</div>
+    <div class="container">
+        <header>
+            <h1>Student Portfolio Showcase</h1>
+            <p>A collection of my academic projects, accomplishments, and logs.</p>
+        </header>
+
+        <!-- Form Section -->
+        <div class="section-card">
+            <h2>Add Project / Record</h2>
+            <form id="dataForm">
+                <input type="text" id="title" placeholder="Project or Record Title (e.g., Web App Lab 1)" required>
+                <textarea id="content" placeholder="Description / Details regarding the project..." required></textarea>
+                <button type="submit" id="submitBtn">Submit to Portfolio</button>
+            </form>
+        </div>
+
+        <!-- Portfolio Records Showcase -->
+        <div class="section-card">
+            <h2>Portfolio Records</h2>
+            <div id="recordsContainer">
+                <p class="status-msg">Loading records...</p>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // IMPORTANT: Replace this URL with your specific Vercel deployment URL
         const VERCEL_API_URL = 'https://student-api-backend-gamma.vercel.app/api';
+
+        // Helper to safely escape text (prevents XSS attacks)
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
 
         // Function to fetch and display records
         async function loadRecords() {
+            const container = document.getElementById('recordsContainer');
             try {
                 const response = await fetch(VERCEL_API_URL);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
                 const records = await response.json();
-
-                const container = document.getElementById('recordsContainer');
                 container.innerHTML = '';
 
-                if(records.length === 0) {
-                    container.innerHTML = '<p>No records found.</p>';
+                if (!Array.isArray(records) || records.length === 0) {
+                    container.innerHTML = '<p class="status-msg">No portfolio records found.</p>';
                     return;
                 }
 
                 records.forEach(record => {
-                    const div = document.createElement('div');
-                    div.className = 'card';
-                    div.innerHTML = `<strong>${record.title}</strong><br>${record.content}`;
-                    container.appendChild(div);
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="card-title">${escapeHTML(record.title)}</div>
+                        <div class="card-content">${escapeHTML(record.content)}</div>
+                    `;
+                    container.appendChild(card);
                 });
             } catch (error) {
-                document.getElementById('recordsContainer').innerText = 'Error loading records.';
+                console.error('Error fetching records:', error);
+                container.innerHTML = '<p class="status-msg" style="color: #e11d48;">Failed to load records from database.</p>';
             }
         }
 
@@ -54,21 +236,37 @@
         document.getElementById('dataForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const titleInput = document.getElementById('title');
+            const contentInput = document.getElementById('content');
+
+            const title = titleInput.value.trim();
+            const content = contentInput.value.trim();
+
+            if (!title || !content) return;
+
+            // Update button state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
 
             try {
-                await fetch(VERCEL_API_URL, {
+                const response = await fetch(VERCEL_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ title, content })
                 });
 
-                // Clear form and reload records
+                if (!response.ok) throw new Error('Failed to post record');
+
+                // Reset inputs and reload UI
                 document.getElementById('dataForm').reset();
-                loadRecords();
+                await loadRecords();
             } catch (error) {
-                alert('Failed to submit record.');
+                console.error('Error submitting record:', error);
+                alert('Failed to submit record. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit to Portfolio';
             }
         });
 
